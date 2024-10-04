@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: garsons-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: garsons
+  template:
+    metadata:
+      labels:
+        app: garsons
+    spec:
+      containers:
+        - name: garsons
+          image: husseingh/garsons
+          env:
+            - name: MONGO_URL
+              value: "mongodb://garsons-mongo-srv:27017/garsons"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: CLOUD_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-name
+                  key: CLOUD_NAME
+            - name: CLOUD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-api-key
+                  key: CLOUD_API_KEY
+            - name: CLOUD_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-api-secret
+                  key: CLOUD_API_SECRET
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: "staj"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: garsons-srv
+spec:
+  selector:
+    app: garsons
+  ports:
+    - name: garsons
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

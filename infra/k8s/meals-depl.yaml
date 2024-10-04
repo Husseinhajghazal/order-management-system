@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meals-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meals
+  template:
+    metadata:
+      labels:
+        app: meals
+    spec:
+      containers:
+        - name: meals
+          image: husseingh/meals
+          env:
+            - name: MONGO_URL
+              value: "mongodb://meals-mongo-srv:27017/meals"
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_SECRET
+            - name: CLOUD_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-name
+                  key: CLOUD_NAME
+            - name: CLOUD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-api-key
+                  key: CLOUD_API_KEY
+            - name: CLOUD_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: cloud-api-secret
+                  key: CLOUD_API_SECRET
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: "http://nats-srv:4222"
+            - name: NATS_CLUSTER_ID
+              value: "staj"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meals-srv
+spec:
+  selector:
+    app: meals
+  ports:
+    - name: meals
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

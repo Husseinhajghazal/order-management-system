@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meals-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meals-mongo
+  template:
+    metadata:
+      labels:
+        app: meals-mongo
+    spec:
+      containers:
+        - name: meals-mongo
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meals-mongo-srv
+spec:
+  selector:
+    app: meals-mongo
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017
