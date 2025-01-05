@@ -32,3 +32,5 @@ coverage/
 
 # NPM lock file (if you're using yarn)
 yarn.lock
+
+common/

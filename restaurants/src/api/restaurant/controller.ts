@@ -10,11 +10,7 @@ import {
   signToken,
 } from "./service";
 import cloudinary from "../../config/cloudinary";
-import {
-  checkPassword,
-  NotAuthorizedError,
-  successRes,
-} from "@husseintickets/common";
+import { checkPassword, successRes } from "@husseintickets/common";
 import { RestaurantDeletedPublisher } from "../../events/publishers/restaurant-deleted-publisher";
 import { natsWrapper } from "../../nats-wrapper";
 
